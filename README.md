@@ -6,8 +6,8 @@ package by URL, byte size, and SHA-256.
 
 The published catalog is static:
 
-- `https://devnull03.github.io/qrate-plugin-registry/catalog.json`
-- `https://devnull03.github.io/qrate-plugin-registry/catalog.json.sig`
+- `https://qrate.dvnl.work/plugins/catalog.json`
+- `https://qrate.dvnl.work/plugins/catalog.json.sig`
 
 qrate verifies the Ed25519 signature before it parses the catalog. An official listing means that
 maintainers reviewed the record and exact release package. It does not guarantee that third-party

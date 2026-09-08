@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://devnull03.github.io/qrate-plugin-registry/schemas/listing.schema.json",
+  "$id": "https://qrate.dvnl.work/plugins/schemas/listing.schema.json",
   "title": "qrate registry listing",
   "type": "object",
   "additionalProperties": false,

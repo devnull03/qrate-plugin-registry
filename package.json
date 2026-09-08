@@ -11,6 +11,7 @@
     "validate:artifacts": "node scripts/validate-records.mjs --artifacts",
     "build": "node scripts/build-catalog.mjs",
     "sign": "node scripts/sign-catalog.mjs",
+    "publish:cloudflare": "node scripts/publish-cloudflare.mjs",
     "check": "npm test && npm run validate && npm run build"
   },
   "dependencies": {

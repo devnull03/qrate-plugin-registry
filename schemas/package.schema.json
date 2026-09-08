@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://devnull03.github.io/qrate-plugin-registry/schemas/package.schema.json",
+  "$id": "https://qrate.dvnl.work/plugins/schemas/package.schema.json",
   "title": "qrate plugin package manifest",
   "type": "object",
   "additionalProperties": false,
