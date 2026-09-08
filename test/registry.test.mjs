@@ -51,6 +51,13 @@ test('listing and generated catalog satisfy their schemas', async () => {
   assert.equal('releases' in catalog.plugins[0], false);
 });
 
+test('distribution IDs require well-formed dotted segments', async () => {
+  const validate = (await validators()).listing;
+  for (const id of ['plugin', 'org.-plugin', 'org.plugin-', 'org..plugin']) {
+    assert.equal(validate({ ...listing(), id }), false, id);
+  }
+});
+
 test('latest release uses semantic version components', () => {
   assert.equal(
     latestRelease([
