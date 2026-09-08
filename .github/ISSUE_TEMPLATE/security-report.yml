@@ -1,0 +1,21 @@
+name: Security report guidance
+description: Learn where to report a compromised plugin or catalog
+title: "[Security]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not disclose a compromised plugin release or signing key here. Stop and use this repository's private Security advisory form. Use a public issue only for non-sensitive security documentation questions.
+  - type: checkboxes
+    id: public
+    attributes:
+      label: Confirmation
+      options:
+        - label: This report contains no vulnerability details, leaked keys, or private evidence.
+          required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Public documentation question
+    validations:
+      required: true

@@ -1,0 +1,54 @@
+name: Plugin listing help
+description: Ask for help preparing a plugin listing pull request
+title: "[Listing help]: "
+labels: ["listing"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An issue cannot publish a plugin. Use this form for preparation help, then open a pull request with the registry record.
+  - type: input
+    id: repository
+    attributes:
+      label: Public plugin repository
+      placeholder: https://github.com/owner/plugin
+    validations:
+      required: true
+  - type: input
+    id: release
+    attributes:
+      label: Versioned GitHub release
+      placeholder: https://github.com/owner/plugin/releases/tag/v1.0.0
+    validations:
+      required: true
+  - type: input
+    id: id
+    attributes:
+      label: Stable distribution ID
+      placeholder: org.example.plugin
+    validations:
+      required: true
+  - type: dropdown
+    id: license
+    attributes:
+      label: SPDX license
+      options:
+        - Apache-2.0
+        - BSD-2-Clause
+        - BSD-3-Clause
+        - CC-BY-4.0
+        - GPL-3.0-only
+        - GPL-3.0-or-later
+        - LGPL-3.0-only
+        - LGPL-3.0-or-later
+        - MIT
+        - Unlicense
+        - Zlib
+    validations:
+      required: true
+  - type: textarea
+    id: help
+    attributes:
+      label: What help do you need?
+    validations:
+      required: true
