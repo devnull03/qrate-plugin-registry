@@ -21,6 +21,8 @@ jobs:
     environment:
       name: catalog-production
       url: ${{ steps.pages.outputs.page_url }}
+    env:
+      SITE_DEPLOY_HOOK: ${{ secrets.SITE_DEPLOY_HOOK }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,6 +35,7 @@ jobs:
       - run: npm run sign
         env:
           CATALOG_SIGNING_KEY: ${{ secrets.CATALOG_SIGNING_KEY }}
+          QRATE_PLUGIN_CATALOG_PUBLIC_KEY: ${{ vars.QRATE_PLUGIN_CATALOG_PUBLIC_KEY }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -40,7 +43,5 @@ jobs:
       - id: pages
         uses: actions/deploy-pages@v4
       - name: Request qrate site rebuild
-        if: ${{ secrets.SITE_DEPLOY_HOOK != '' }}
-        env:
-          SITE_DEPLOY_HOOK: ${{ secrets.SITE_DEPLOY_HOOK }}
+        if: ${{ env.SITE_DEPLOY_HOOK != '' }}
         run: curl --fail-with-body --request POST "$SITE_DEPLOY_HOOK"

@@ -1,4 +1,4 @@
-import { createHash, createPrivateKey, sign } from 'node:crypto';
+import { createHash, createPrivateKey, createPublicKey, sign } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const encoded = process.env.CATALOG_SIGNING_KEY;
@@ -9,6 +9,12 @@ const key = createPrivateKey({
   type: 'pkcs8',
 });
 if (key.asymmetricKeyType !== 'ed25519') throw new Error('catalog signing key must be Ed25519');
+const expectedPublicKey = process.env.QRATE_PLUGIN_CATALOG_PUBLIC_KEY;
+if (!expectedPublicKey) throw new Error('QRATE_PLUGIN_CATALOG_PUBLIC_KEY is not configured');
+const actualPublicKey = createPublicKey(key).export({ format: 'jwk' }).x;
+if (actualPublicKey !== expectedPublicKey) {
+  throw new Error('catalog signing key does not match QRATE_PLUGIN_CATALOG_PUBLIC_KEY');
+}
 
 const bytes = await readFile(new URL('../dist/catalog.json', import.meta.url));
 const signature = {
