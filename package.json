@@ -1,0 +1,20 @@
+{
+  "name": "qrate-plugin-registry",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "validate": "node scripts/validate-records.mjs",
+    "validate:artifacts": "node scripts/validate-records.mjs --artifacts",
+    "build": "node scripts/build-catalog.mjs",
+    "sign": "node scripts/sign-catalog.mjs",
+    "check": "npm test && npm run validate && npm run build"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "yauzl": "3.4.0"
+  }
+}
