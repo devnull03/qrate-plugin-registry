@@ -14,7 +14,7 @@ export const MAX_PACKAGE_FILES = 10_000;
 const openZip = promisify(yauzl.fromBuffer);
 const LICENSE_MARKERS = {
   'Apache-2.0': ['apache license', 'version 2.0'],
-  'BSD-2-Clause': ['redistribution and use', 'two clauses'],
+  'BSD-2-Clause': ['redistribution and use', 'this software is provided by the copyright holders'],
   'BSD-3-Clause': ['redistribution and use', 'neither the name'],
   'CC-BY-4.0': ['creative commons attribution 4.0'],
   'GPL-3.0-only': ['gnu general public license', 'version 3'],
@@ -25,6 +25,13 @@ const LICENSE_MARKERS = {
   Unlicense: ['this is free and unencumbered software released into the public domain'],
   Zlib: ['this software is provided \'as-is\'', 'permission is granted to anyone'],
 };
+
+export function licenseMatches(identifier, value) {
+  const text = value.toLowerCase();
+  const markers = LICENSE_MARKERS[identifier];
+  if (!markers?.every((marker) => text.includes(marker))) return false;
+  return identifier !== 'BSD-2-Clause' || !text.includes('neither the name');
+}
 
 const json = async (relative) =>
   JSON.parse(await readFile(new URL(relative, ROOT), 'utf8'));
@@ -111,15 +118,40 @@ export async function validateRecords(records) {
   }
 }
 
-const versionParts = (version) =>
-  version.split(/[+-]/, 1)[0].split('.').map(Number);
+const compareVersions = (left, right) => {
+  const split = (value) => {
+    const withoutBuild = value.split('+')[0];
+    const dash = withoutBuild.indexOf('-');
+    return dash === -1
+      ? [withoutBuild, undefined]
+      : [withoutBuild.slice(0, dash), withoutBuild.slice(dash + 1)];
+  };
+  const [leftVersion, leftPrerelease] = split(left);
+  const [rightVersion, rightPrerelease] = split(right);
+  const a = leftVersion.split('.').map(Number);
+  const b = rightVersion.split('.').map(Number);
+  const core = a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+  if (core || leftPrerelease === rightPrerelease) return core;
+  if (leftPrerelease === undefined) return 1;
+  if (rightPrerelease === undefined) return -1;
+  const leftParts = leftPrerelease.split('.');
+  const rightParts = rightPrerelease.split('.');
+  for (let index = 0; index < Math.max(leftParts.length, rightParts.length); index += 1) {
+    if (leftParts[index] === undefined) return -1;
+    if (rightParts[index] === undefined) return 1;
+    if (leftParts[index] === rightParts[index]) continue;
+    const leftNumber = /^\d+$/.test(leftParts[index]) ? Number(leftParts[index]) : undefined;
+    const rightNumber = /^\d+$/.test(rightParts[index]) ? Number(rightParts[index]) : undefined;
+    if (leftNumber !== undefined && rightNumber !== undefined) return leftNumber - rightNumber;
+    if (leftNumber !== undefined) return -1;
+    if (rightNumber !== undefined) return 1;
+    return leftParts[index].localeCompare(rightParts[index]);
+  }
+  return 0;
+};
 
 export function latestRelease(releases) {
-  return [...releases].sort((left, right) => {
-    const a = versionParts(left.version);
-    const b = versionParts(right.version);
-    return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
-  }).at(-1);
+  return [...releases].sort((left, right) => compareVersions(left.version, right.version)).at(-1);
 }
 
 export function buildCatalog(records, sourceCommit, generatedAt = new Date().toISOString()) {
@@ -248,9 +280,8 @@ export async function inspectPackage(buffer) {
     const manifest = JSON.parse((await readEntry(zip, manifestEntry)).toString('utf8'));
     assertValid((await validators()).package, manifest, 'qrate-plugin.json');
     if (!names.has(manifest.entry)) throw new Error(`package entry does not exist: ${manifest.entry}`);
-    const license = (await readEntry(zip, licenseEntry)).toString('utf8').toLowerCase();
-    const markers = LICENSE_MARKERS[manifest.license];
-    if (!markers.every((marker) => license.includes(marker))) {
+    const license = (await readEntry(zip, licenseEntry)).toString('utf8');
+    if (!licenseMatches(manifest.license, license)) {
       throw new Error(`license text does not match ${manifest.license}`);
     }
     return manifest;

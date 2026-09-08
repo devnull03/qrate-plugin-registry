@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { assertValid, buildCatalog, latestRelease, validateRecords, validators } from '../scripts/lib.mjs';
+import {
+  assertValid,
+  buildCatalog,
+  latestRelease,
+  licenseMatches,
+  validateRecords,
+  validators,
+} from '../scripts/lib.mjs';
 
 const listing = () => ({
   schema: 1,
@@ -46,8 +53,13 @@ test('listing and generated catalog satisfy their schemas', async () => {
 
 test('latest release uses semantic version components', () => {
   assert.equal(
-    latestRelease([{ version: '1.9.0' }, { version: '1.10.0' }, { version: '2.0.0-beta.1' }]).version,
-    '2.0.0-beta.1',
+    latestRelease([
+      { version: '1.9.0' },
+      { version: '1.10.0' },
+      { version: '2.0.0' },
+      { version: '2.0.0-beta.1' },
+    ]).version,
+    '2.0.0',
   );
 });
 
@@ -71,4 +83,11 @@ test('revoked releases require a reason', async () => {
     validateRecords([{ file: 'org.example.plugin.json', record }]),
     /needs a reason/,
   );
+});
+
+test('license checks distinguish the two BSD variants', () => {
+  const common = 'Redistribution and use. This software is provided by the copyright holders.';
+  assert.equal(licenseMatches('BSD-2-Clause', common), true);
+  assert.equal(licenseMatches('BSD-2-Clause', `${common} Neither the name may be used.`), false);
+  assert.equal(licenseMatches('BSD-3-Clause', `${common} Neither the name may be used.`), true);
 });
