@@ -68,7 +68,7 @@
       ],
       "properties": {
         "version": { "$ref": "package.schema.json#/properties/version" },
-        "api_version": { "type": "integer", "minimum": 1, "maximum": 2 },
+        "api_version": { "$ref": "package.schema.json#/properties/api_version" },
         "permissions": { "$ref": "package.schema.json#/properties/permissions" },
         "published_at": { "type": "string", "format": "date-time" },
         "release_url": { "type": "string", "pattern": "^https://github\\.com/.+/releases/tag/.+$" },
