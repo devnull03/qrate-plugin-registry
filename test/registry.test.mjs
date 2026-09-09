@@ -37,6 +37,19 @@ const listing = () => ({
   ],
 });
 
+const manifest = (apiVersion) => ({
+  schema: 1,
+  id: 'org.example.plugin',
+  name: 'Example',
+  version: '1.0.0',
+  api_version: apiVersion,
+  entry: 'init.lua',
+  description: 'A test plugin.',
+  homepage: 'https://example.org/plugin',
+  license: 'MIT',
+  permissions: [],
+});
+
 test('listing and generated catalog satisfy their schemas', async () => {
   const checks = await validators();
   const record = listing();
@@ -49,6 +62,18 @@ test('listing and generated catalog satisfy their schemas', async () => {
   assertValid(checks.catalog, catalog, 'catalog');
   assert.equal(catalog.plugins[0].current.version, '1.0.0');
   assert.equal('releases' in catalog.plugins[0], false);
+});
+
+test('package and listing schemas accept API 2 and reject newer APIs', async () => {
+  const checks = await validators();
+  assertValid(checks.package, manifest(2), 'package');
+  assert.equal(checks.package(manifest(3)), false);
+
+  const record = listing();
+  record.releases[0].api_version = 2;
+  assertValid(checks.listing, record, 'listing');
+  record.releases[0].api_version = 3;
+  assert.equal(checks.listing(record), false);
 });
 
 test('distribution IDs require well-formed dotted segments', async () => {
