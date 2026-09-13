@@ -14,4 +14,4 @@ Distribution IDs are stable reverse-domain-style identifiers. They must not chan
 repository, display name, or publisher changes. Release asset URLs must belong to the listing's
 GitHub repository and must point to an explicit `.zip` asset.
 
-The current qrate plugin API version is 1. The only optional permission is `net`.
+The current qrate plugin API version is 2. The only optional permission is `net`.
