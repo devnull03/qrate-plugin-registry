@@ -23,6 +23,17 @@
       "sha256": "062207fa5a7a093fa5b46aa8ebcd313b12e0215b39707e45c6e16cca4a64a433",
       "bytes": 16292,
       "status": "active"
+    },
+    {
+      "version": "0.1.1",
+      "api_version": 1,
+      "permissions": ["net"],
+      "published_at": "2026-09-13T02:39:33Z",
+      "release_url": "https://github.com/devnull03/qrate-islandora-plugin/releases/tag/v0.1.1",
+      "artifact_url": "https://github.com/devnull03/qrate-islandora-plugin/releases/download/v0.1.1/org.islandora.vocabularies-0.1.1.zip",
+      "sha256": "692c33fc02ec6f38b1e4887d65d729cb001380a06630d284dc098e9d5b6d312a",
+      "bytes": 16527,
+      "status": "active"
     }
   ]
 }
